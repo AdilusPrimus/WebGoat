@@ -6,7 +6,7 @@ on:
 jobs:
   release:
     name: Release WebGoat
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment:
       name: release
     steps:
