@@ -57,3 +57,5 @@ TestClass.class
 /.gitconfig
 
 webgoat.gitconfig
+.history/*
+.java-version

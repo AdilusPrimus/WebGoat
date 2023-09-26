@@ -7,6 +7,59 @@
 [![Gitter](https://badges.gitter.im/OWASPWebGoat/community.svg)](https://gitter.im/OWASPWebGoat/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Discussions](https://img.shields.io/github/discussions/WebGoat/WebGoat)](https://github.com/WebGoat/WebGoat/discussions)
 
+# Modification
+
+## Instructions for tracing the WebGoat application with DataDog Java tracer
+
+The goal here, is to explore the **DataDog** APM solution, mainly for testing the profiling and security assessment capabilities.
+
+![WebGoat vulnerabilities section in service page in DataDog APM module](img/DataDog-Sec-WebGoat.png)
+Here is a sneak peek on how discovered vulnerabilities get displayed in the WebGoat service page in DataDog APM module.
+Once we activate **Application Security** integration, the Service page gets enhanced with a security debt management section.
+
+The current repository was forked from the upstream official repo.
+The only introduced change that you will find here, if the formula relating how to inject the Datadog Tracer into the Docker Image, a subsequent step following the mandatory packaging of the WebGoat application).
+
+You'll require to have a valid DataDog account, and a DataDog agent either deployed as a Docker container (*using the same Docker virtual network as the WebGoat container*), or deployed locally on the host machine (*alongside the docker daemon*)
+
+You will find more explaining,  as comments, in the **Dockerfile** as well.
+
+```shell
+# Let's build the image, once we have generated as instructed below, the WebGoat application archive with Maven
+docker build .  --no-cache --pull -t adilusprimus/webgoat-dd:vtest10
+
+# You can now publish it (if required) to Docker Hub
+docker push adilusprimus/webgoat-dd:vtest10
+
+# Let's start the application with the DataDog Java tracer environment variables (I exposed it on port 9080)
+docker run -e DD_ENV="test" \
+           -e DD_SERVICE="webgoat" \
+           -e DD_VERSION="1.0.0" \
+           -l com.datadoghq.tags.env="test" \
+           -l com.datadoghq.tags.service="webgoat" \
+           -l com.datadoghq.tags.version="1.0.0" \
+           -e DD_APM_ENABLED=true \
+           -e DD_RUNTIME_METRICS_ENABLED=true \
+           -e DD_DYNAMIC_INSTRUMENTATION_ENABLED=true \
+           -e DD_AGENT_HOST="localhost" \
+           -e DD_TRACE_AGENT_PORT="8126" \
+           -e DD_LOGS_INJECTION=true \
+           -e DD_LOGS_ENABLED=true \
+           -e DD_PROCESS_AGENT_ENABLED=true \
+           -e DD_APPSEC_ENABLED=true \
+           -e DD_PROFILING_ENABLED=false -p 9080:8080 -t adilusprimus/webgoat-dd:vtest10
+
+ [dd.trace 2023-09-25 07:48:59:336 +0000] [main] INFO io.sqreen.powerwaf.NativeLibLoader - Will load native library
+[dd.trace 2023-09-25 07:48:59:460 +0000] [main] WARN com.datadog.appsec.powerwaf.PowerWAFModule - WAF has rule against unknown address graphql.server.all_resolvers
+[dd.trace 2023-09-25 07:48:59:462 +0000] [main] INFO com.datadog.appsec.powerwaf.PowerWAFModule - Created new WAF context with rules (146 OK, 0 BAD), version 1.8.0
+[dd.trace 2023-09-25 07:48:59:493 +0000] [main] INFO com.datadog.appsec.AppSecSystem - AppSec is FULLY_ENABLED with powerwaf(libddwaf: 1.12.0) loaded
+[dd.trace 2023-09-25 07:48:59:496 +0000] [main] INFO com.datadog.debugger.agent.DebuggerAgent - Starting Dynamic Instrumentation
+[dd.trace 2023-09-25 07:48:59:738 +0000] [dd-task-scheduler] INFO datadog.trace.agent.core.StatusLogger - DATADOG TRACER CONFIGURATION {"version":"1.21.0~7ab7c4f068","os_name":"Linux","os_version":"6.2.0-33-generic","architecture":"amd64","lang":"jvm","lang_version":"17.0.8.1","jvm_vendor":"Eclipse Adoptium","jvm_version":"17.0.8.1+1","java_class_version":"61.0","http_nonProxyHosts":"null","http_proxyHost":"null","enabled":true,"service":"webgoat","agent_url":"http://localhost:8126","agent_error":true,"debug":false,"trace_propagation_style_extract":["datadog"],"trace_propagation_style_inject":["datadog"],"analytics_enabled":false,"sampling_rules":[{},{}],"priority_sampling_enabled":true,"logs_correlation_enabled":true,"profiling_enabled":true,"remote_config_enabled":true,"debugger_enabled":true,"appsec_enabled":"FULLY_ENABLED","telemetry_enabled":true,"dd_version":"1.0.0","health_checks_enabled":true,"configuration_file":"no config file present","runtime_id":"5a29d282-e442-4bfb-b9e9-938cadb94edf","logging_settings":{"levelInBrackets":false,"dateTimeFormat":"'[dd.trace 'yyyy-MM-dd HH:mm:ss:SSS Z']'","logFile":"System.err","configurationFile":"simplelogger.properties","showShortLogName":false,"showDateTime":true,"showLogName":true,"showThreadName":true,"defaultLogLevel":"INFO","warnLevelString":"WARN","embedException":false},"cws_enabled":false,"cws_tls_refresh":5000,"datadog_profiler_enabled":true,"datadog_profiler_safe":true,"datadog_profiler_enabled_overridden":false}
+          
+```
+
+*Start of the original README.md*
+
 # Introduction
 
 WebGoat is a deliberately insecure web application maintained by [OWASP](http://www.owasp.org/) designed to teach web
