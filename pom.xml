@@ -140,7 +140,7 @@
     <thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
     <webdriver.version>4.3.1</webdriver.version>
     <webgoat.port>8080</webgoat.port>
-    <webwolf.port>9090</webwolf.port>
+    <webwolf.port>9191</webwolf.port>
     <wiremock.version>2.27.2</wiremock.version>
     <xml-resolver.version>1.2</xml-resolver.version>
     <xstream.version>1.4.5</xstream.version>
@@ -150,6 +150,12 @@
 
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-prometheus</artifactId>
+        <scope>runtime</scope>
+      </dependency>
 
       <dependency>
         <groupId>org.ow2.asm</groupId>
@@ -423,7 +429,8 @@
           <excludeDevtools>true</excludeDevtools>
           <executable>true</executable>
           <mainClass>org.owasp.webgoat.server.StartWebGoat</mainClass>
-          <!-- See http://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-extract-specific-libraries-when-an-executable-jar-runs -->
+          <!-- See
+          http://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-extract-specific-libraries-when-an-executable-jar-runs -->
           <requiresUnpack>
             <dependency>
               <groupId>org.asciidoctor</groupId>
@@ -487,10 +494,13 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
-          <argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
-                        --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
-                        --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED
-                        --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED</argLine>
+          <argLine>--add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens
+            java.base/java.io=ALL-UNNAMED
+            --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
+            --add-opens java.base/java.util=ALL-UNNAMED --add-opens
+            java.base/java.lang.reflect=ALL-UNNAMED
+            --add-opens java.base/java.text=ALL-UNNAMED --add-opens
+            java.desktop/java.awt.font=ALL-UNNAMED</argLine>
           <excludes>
             <exclude>**/*IntegrationTest.java</exclude>
             <exclude>src/it/java</exclude>
@@ -706,7 +716,8 @@
               <skipProvidedScope>false</skipProvidedScope>
               <skipRuntimeScope>false</skipRuntimeScope>
               <suppressionFiles>
-                <!--suppress UnresolvedMavenProperty -->
+                <!--suppress
+                UnresolvedMavenProperty -->
                 <suppressionFile>${maven.multiModuleProjectDirectory}/config/dependency-check/project-suppression.xml</suppressionFile>
               </suppressionFiles>
             </configuration>

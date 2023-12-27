@@ -17,16 +17,18 @@ COPY --chown=webgoat target/webgoat-*.jar /home/webgoat/webgoat.jar
 COPY --chown=webgoat target/dd-java-agent.jar /home/webgoat/dd-java-agent.jar
 
 EXPOSE 8080
-EXPOSE 9090
+EXPOSE 9191
 
 WORKDIR /home/webgoat
-ENTRYPOINT [ "java", \
+ENTRYPOINT [ "java", \ 
    "-javaagent:dd-java-agent.jar", \
-   "-Ddd.service=webgoat", \
-   "-Ddd.env=test", \
-   "-Ddd.version=1.0.0", \
    "-Ddd.profiling.enabled=true", \
    "-XX:FlightRecorderOptions=stackdepth=256", \
+   "-Ddd.logs.injection=true", \
+   "-Ddd.appsec.enabled=true", \
+   "-Ddd.iast.enabled=true", \
+   "-Ddd.service=WebGoat", \
+   "-Ddd.env=test", \
    "-Duser.home=/home/webgoat", \
    "-Dfile.encoding=UTF-8", \
    "--add-opens", "java.base/java.lang=ALL-UNNAMED", \
@@ -44,5 +46,5 @@ ENTRYPOINT [ "java", \
    "-Dwebgoat.host=0.0.0.0", \
    "-Dwebwolf.host=0.0.0.0", \
    "-Dwebgoat.port=8080", \
-   "-Dwebwolf.port=9090", \
+   "-Dwebwolf.port=9191", \
    "-jar", "webgoat.jar" ]

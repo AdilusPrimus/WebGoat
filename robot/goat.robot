@@ -11,7 +11,7 @@ ${BROWSER}  chrome
 ${SLEEP}  100
 ${DELAY}  0.25
 ${ENDPOINT}  http://127.0.0.1:8080/WebGoat
-${ENDPOINT_WOLF}  http://127.0.0.1:9090
+${ENDPOINT_WOLF}  http://127.0.0.1:9191
 ${USERNAME}  robotuser
 ${PASSWORD}  password
 ${HEADLESS}  ${FALSE}
